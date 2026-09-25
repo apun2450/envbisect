@@ -204,8 +204,16 @@ def test_readme_demo_end_to_end() -> None:
     )
 
     assert result.returncode == 0, output(result)
-    assert "TZ" in output(result)
-    assert "FEATURE_CACHE" in output(result)
+    minimal = re.search(
+        r"Minimal failure-inducing set[^\n]*\n(?P<changes>.*?)\nVerification",
+        result.stdout,
+        re.DOTALL,
+    )
+    assert minimal is not None, output(result)
+    assert re.findall(r"^  ([A-Za-z_][A-Za-z0-9_]*)$", minimal["changes"], re.MULTILINE) == [
+        "FEATURE_CACHE",
+        "TZ",
+    ]
     assert "Verification" in output(result)
 
 
@@ -306,3 +314,70 @@ def test_cli_reports_timeout_during_minimization(tmp_path: Path) -> None:
     assert "uncertain candidate" in output(result).lower()
     assert "TIMEOUT" in output(result)
     assert "Minimal failure-inducing set" not in output(result)
+
+
+def test_cli_parse_error_does_not_display_snapshot_contents(tmp_path: Path) -> None:
+    secret = "malformed-file-sensitive-literal"
+    result = diagnose(
+        tmp_path,
+        f"GITHUB_TOKEN={secret}\nINVALID {secret}\n",
+        "GITHUB_TOKEN=other-value\n",
+        "import sys; sys.exit(0)",
+        "--no-color",
+    )
+
+    assert result.returncode == 1, output(result)
+    assert "Invalid environment assignment on line 2" in output(result)
+    assert secret not in output(result)
+
+
+def test_cli_execution_error_does_not_display_command_or_snapshot_secret(tmp_path: Path) -> None:
+    secret = "execution-error-sensitive-literal"
+    passing = tmp_path / "pass.env"
+    failing = tmp_path / "fail.env"
+    passing.write_text(f"GITHUB_TOKEN=old-{secret}\n", encoding="utf-8")
+    failing.write_text(f"GITHUB_TOKEN=new-{secret}\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "envbisect",
+            "diagnose",
+            "--pass",
+            str(passing),
+            "--fail",
+            str(failing),
+            "--no-color",
+            "--",
+            f"envbisect-nonexistent-{secret}",
+        ],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=45,
+        check=False,
+    )
+
+    assert result.returncode == 5, output(result)
+    assert "could not be executed" in output(result).lower()
+    assert secret not in output(result)
+
+
+def test_cli_escapes_unicode_controls_in_values_and_verbose_output(tmp_path: Path) -> None:
+    controls = "\u009b\u202e"
+    result = diagnose(
+        tmp_path,
+        "VALUE=safe\n",
+        f"VALUE=unsafe{controls}\n",
+        "import os,sys; value=os.environ['VALUE']; print(value); sys.exit(value != 'safe')",
+        "--verbose",
+        "--no-color",
+    )
+
+    assert result.returncode == 0, output(result)
+    assert "\u009b" not in output(result)
+    assert "\u202e" not in output(result)
+    assert r"\x9b\u202e" in output(result)

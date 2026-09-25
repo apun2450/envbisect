@@ -2,14 +2,15 @@
 
 Changes to EnvBisect are recorded here.
 
-## Unreleased (0.1.0)
+## 0.1.0
+
+First public release.
 
 ### Added
 
-- Diagnose a command using passing and failing dotenv snapshots.
-- Compare environment-variable values and presence, including empty versus absent values.
+- Compare passing and failing dotenv snapshots, including changed values and presence.
 - Minimize failure-inducing differences with a ddmin style algorithm that handles interacting variables.
-- Verify the selected changes from the passing baseline and attempt reverse verification from the failing baseline.
-- Repeat candidate commands to identify mixed outcomes, report timeouts distinctly, and count command executions.
-- Redact likely secret environment values in ordinary reports.
-- Provide the 46-difference demo, automated tests, and contributor documentation.
+- Verify selected changes from the passing baseline and attempt reverse verification from the failing baseline.
+- Repeat command executions to detect flaky outcomes, report timeouts distinctly, and count runs.
+- Heuristically redact likely secret environment values in ordinary reports.
+- Include a deterministic 46-difference demo, automated tests, and contributor documentation.

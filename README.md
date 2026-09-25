@@ -1,15 +1,41 @@
 # EnvBisect
 
+[![CI](https://github.com/apun2450/envbisect/actions/workflows/ci.yml/badge.svg)](https://github.com/apun2450/envbisect/actions/workflows/ci.yml)
+![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **Find the environment difference that actually broke your program.**
 
-Works locally. Fails in CI. Forty-six environment variables differ. EnvBisect runs your command under controlled combinations and finds the two that matter in the included demo.
+Works locally.<br>
+Fails in CI.<br>
+46 environment variables differ.<br>
+EnvBisect finds the 2 that matter in the included demo.
+
+Install once from the checkout with `python -m pip install -e .`, then run:
 
 ```bash
-python -m pip install -e .
-envbisect diagnose --pass examples/demo/pass.env --fail examples/demo/fail.env -- python examples/demo/app.py
+envbisect diagnose \
+  --pass examples/demo/pass.env \
+  --fail examples/demo/fail.env \
+  -- python examples/demo/app.py
 ```
 
-The demo reports `TZ` and `FEATURE_CACHE`. Neither change causes its failure alone; both are required. The 44 `DEMO_NOISE_*` changes do nothing.
+PowerShell (one line): `envbisect diagnose --pass examples/demo/pass.env --fail examples/demo/fail.env -- python examples/demo/app.py`
+
+The report includes:
+
+```text
+46 environment differences found.
+...
+Minimal failure-inducing set (1-minimal under the tested conditions):
+  FEATURE_CACHE
+    0 → 1
+  TZ
+    Asia/Kolkata → UTC
+These changes act together in the observed failure.
+```
+
+Neither change causes this demo failure alone; both are required. The 44 `DEMO_NOISE_*` changes do nothing.
 
 An environment diff tells you **what changed**. EnvBisect tests **which combinations reproduce the failure** under a specified command and execution environment.
 
@@ -129,7 +155,7 @@ python -m ruff check .
 python -m ruff format --check .
 ```
 
-See [Contributing](CONTRIBUTING.md) for the project workflow and [the changelog](CHANGELOG.md) for release notes. Future work will stay focused on making experiments and explanations more reliable before adding other kinds of environment drift.
+See [Contributing](CONTRIBUTING.md) for the project workflow, [demo recording instructions](docs/demo.md), [the changelog](CHANGELOG.md), and the [v0.1.0 release notes](docs/release-v0.1.0.md). Future work will stay focused on making experiments and explanations more reliable before adding other kinds of environment drift.
 
 ## License
 

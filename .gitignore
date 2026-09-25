@@ -9,3 +9,21 @@ build/
 dist/
 work/
 outputs/
+
+# Local configuration and recordings
+.env
+.env.*
+*.env
+*.env.*
+!examples/demo/pass.env
+!examples/demo/fail.env
+*.cast
+demo.gif
+*.log
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

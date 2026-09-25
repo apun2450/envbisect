@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import os
-import re
 import sys
+import unicodedata
 from collections.abc import Iterable
 from typing import TextIO
 
@@ -12,13 +12,11 @@ from .diagnose import BatchResult, DiagnosisProblem, DiagnosisResult
 from .models import Change, Status
 from .redact import format_value, redact_text
 
-_CONTROL = re.compile(r"[\x00-\x1f\x7f]")
-
 
 def _safe_display(value: str) -> str:
     """Prevent a dotenv value from creating terminal control sequences."""
 
-    if _CONTROL.search(value):
+    if any(unicodedata.category(char) in {"Cc", "Cf"} for char in value):
         return value.encode("unicode_escape").decode("ascii")
     return value
 

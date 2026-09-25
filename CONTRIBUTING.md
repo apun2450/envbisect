@@ -35,3 +35,5 @@ To test a CLI change, exercise the installed `envbisect` command as well as the 
 ## Submit a pull request
 
 Describe the problem, the behavior before and after the change, and the commands you ran to verify it. Small, focused pull requests are easiest to review. If a new diagnosis path can fail or become indeterminate, include a test and explain how the CLI communicates that outcome.
+
+For a suspected security vulnerability, follow [SECURITY.md](SECURITY.md). Keep credentials and private environment details out of public issues and pull requests.

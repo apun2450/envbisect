@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest a focused improvement to environment-variable diagnosis.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        EnvBisect focuses on environment-variable presence and values. Please do not include secrets or private environment snapshots.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What diagnosis is difficult today? Include a sanitized example if useful.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the CLI behavior you expect, including how uncertainty should be reported.
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current workaround
+      description: Optional; explain how you handle this today.
