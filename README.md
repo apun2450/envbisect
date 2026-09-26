@@ -1,17 +1,23 @@
 # EnvBisect
 
+**Find the environment difference that actually broke your program.**
+
+![Terminal demo: EnvBisect narrows 46 environment differences to FEATURE_CACHE and TZ and verifies the result](docs/assets/envbisect-demo.gif)
+
+```bash
+pip install envbisect
+```
+
 [![CI](https://github.com/apun2450/envbisect/actions/workflows/ci.yml/badge.svg)](https://github.com/apun2450/envbisect/actions/workflows/ci.yml)
 ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-**Find the environment difference that actually broke your program.**
 
 Works locally.<br>
 Fails in CI.<br>
 46 environment variables differ.<br>
 EnvBisect finds the 2 that matter in the included demo.
 
-Install once from the checkout with `python -m pip install -e .`, then run:
+Try the included fixture from a checkout:
 
 ```bash
 envbisect diagnose \
